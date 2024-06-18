@@ -55,7 +55,7 @@ let loginApproved = false;
 
 try {
     const interaction = await message.awaitMessageComponent({
-        time: 15_000
+        time: 30_000
     });
 
     if (interaction.customId === 'approve') {
