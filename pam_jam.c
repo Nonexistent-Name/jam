@@ -7,8 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <syslog.h>
-
-#define AUTH_BINARY "jam_auth"
+#include "env.h"
 
 // Authentication function
 extern int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
@@ -35,7 +34,7 @@ extern int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const ch
     } else if (pid == 0) {
         // Child process
         // Execute the external binary
-        execl(AUTH_BINARY, AUTH_BINARY, user, (char *)NULL);
+        execl(AUTH_BINARY, AUTH_BINARY, user, DISCORD_TOKEN, DISCORD_APPROVER_USER_ID, (char *)NULL);
         // If exec fails
         _exit(PAM_AUTH_ERR);
     } else {

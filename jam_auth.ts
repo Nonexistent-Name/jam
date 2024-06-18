@@ -7,27 +7,15 @@ import {
     ActionRowBuilder
 } from 'discord.js';
 
-const { DISCORD_TOKEN, DISCORD_APPROVER_USER_ID } = process.env;
-
-if (!DISCORD_TOKEN) {
-    console.error('Missing DISCORD_TOKEN environment variable');
-    process.exit(1);
-}
-
-if (!DISCORD_APPROVER_USER_ID) {
-    console.error('Missing DISCORD_APPROVER_USER_ID environment variable');
-    process.exit(1);
-}
-
 const { positionals } = parseArgs({
     args: Bun.argv.slice(2),
     allowPositionals: true
 });
 
-const username = positionals[0];
+const [username, discordBotToken, discordUserId] = positionals;
 
-if (!username) {
-    console.error('Usage: auth <username>');
+if (!username || !discordBotToken || !discordUserId) {
+    console.error('Usage: auth <username> <discord_bot_token> <discord_user_id>');
     process.exit(1);
 }
 
@@ -39,7 +27,7 @@ client.once(Events.ClientReady, (readyClient) => {
     console.log(`Bot logged in as ${readyClient.user.tag}`);
 });
 
-await client.login(DISCORD_TOKEN);
+await client.login(discordBotToken);
 
 const approve = new ButtonBuilder()
     .setCustomId('approve')
@@ -56,7 +44,7 @@ const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
     decline
 );
 
-const message = await client.users.send(DISCORD_APPROVER_USER_ID, {
+const message = await client.users.send(discordUserId, {
     content: `Login request for ${username}`,
     components: [row]
 });
